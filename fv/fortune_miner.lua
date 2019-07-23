@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-22 18:54:54
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-22 23:18:26
+-- @Last Modified time: 2019-07-23 00:13:50
 
 local component = require("component")
 -- using openOS
@@ -9,18 +9,23 @@ local robot = require("robot")
 local sides = require("sides")
 local inv = component.inventory_controller
 
-local ore_list = {"minecraft:diamond_ore","galacticraftcore:basic_block_core","galacticraftplanets:asteroids_block"}
+local ore_list = {}
+ore_list["minecraft:diamond_ore"]=-1
+ore_list["galacticraftcore:basic_block_core"]=8
+ore_list["galacticraftplanets:asteroids_block"]=4
 
 local repair_tool_side = sides.up
 local ore_src_side = sides.down
 local output_side = sides.up
 local max_use = 300
 
+local sleep_when_no_ores = 10
+
 
 local function ore_slot()
 	for i = 1,16 do
-		local item_stack = inv.getStackInternalSlot(i)
-		if item_stack and item_stack.name in ore_list
+		local item_stack = inv.getStackInInternalSlot(i)
+		if item_stack and ore_list[item_stack.name]
 		then
 			return i
 		end
@@ -36,7 +41,8 @@ end
 
 local use_count = 0
 
-local function mine():
+local function mine()
+	print("Mining...")
 	robot.swing()
 	robot.suck()
 	use_count = use_count + 1
@@ -47,18 +53,32 @@ local function mine():
 	end
 end
 
-local output():
+local function output()
+	print("Exporting minerals...")
 	for i = 1,16 do
-		local item_stack = inv.getStackInternalSlot(i)
-		if item_stack and (not (item_stack.name in ore_list))
-		then
+		local item_stack = inv.getStackInInternalSlot(i)
+		if item_stack and (not ore_list[item_stack.name]) then
+			robot.select(i)
 			inv.dropIntoSlot(output_side, 1)
 		end
+	end
+	print("Export complete")
 end
 
-local input_ore():
+-- No filter!
+local function input_ore()
+	print("Importing ores...")
+	local import_success = true
 	for i = 1, inv.getInventorySize(ore_src_side) do
-		inv.suckFromSlot(ore_src_side, i)
+		import_success = inv.suckFromSlot(ore_src_side, i)
+		if import_success then
+			print("Import complete")
+			break
+		end
+	end
+	if not import_success then
+		print("Nothing to import!")
+		os.sleep(sleep_when_no_ores)
 	end
 end
 
