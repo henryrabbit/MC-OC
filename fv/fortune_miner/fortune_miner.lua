@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-22 18:54:54
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-23 10:03:16
+-- @Last Modified time: 2019-07-23 10:23:22
 
 local component = require("component")
 -- using openOS
@@ -39,7 +39,11 @@ local use_count = 0
 
 local function mine()
 	print("Mining...")
-	robot.swing()
+	if swing_side == sides.front then robot.swing() else
+	if swing_side == sides.up then robot.swingUp() else
+	if swing_side == sides.down then robot.swingDown() else
+		print("Invalid swing side settings! Please check swing_side settings. Valid sides: up, front, down")
+	end end end
 	robot.suck()
 	use_count = use_count + 1
 	if use_count >= max_tool_use
