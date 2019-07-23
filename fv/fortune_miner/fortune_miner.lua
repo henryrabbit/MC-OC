@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-22 18:54:54
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-23 10:32:07
+-- @Last Modified time: 2019-07-23 10:34:51
 
 local component = require("component")
 -- using openOS
@@ -40,9 +40,9 @@ local use_count = 0
 local function mine()
 	print("Mining...")
 	local swing_result = true
-	if swing_side == sides.front then swing_result = robot.swing() else
-	if swing_side == sides.up then swing_result = robot.swingUp() else
-	if swing_side == sides.down then swing_result = robot.swingDown() else
+	if swing_side == sides.front then swing_result, str = robot.swing() else
+	if swing_side == sides.up then swing_result, str = robot.swingUp() else
+	if swing_side == sides.down then swing_result, str = robot.swingDown() else
 		print("Invalid swing side settings! Please check swing_side settings. Valid sides: up, front, down")
 	end end end
 	robot.suck()
@@ -53,6 +53,9 @@ local function mine()
 			repair_tool()
 			use_count = 0
 		end
+	else
+		print("Mining failed.")
+		print(string.format("Reason: %s", str))
 	end
 end
 
