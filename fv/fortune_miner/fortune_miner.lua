@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-22 18:54:54
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-23 09:42:11
+-- @Last Modified time: 2019-07-23 09:51:21
 
 local component = require("component")
 -- using openOS
@@ -17,7 +17,12 @@ local function ore_slot()
 		local item_stack = inv.getStackInInternalSlot(i)
 		if item_stack and ore_list[item_stack.name]
 		then
-			return i
+			if type(ore_list[item_stack.name]) == "table" then
+				if ore_list[item_stack.name][item_stack.damage] then
+					return i
+				end
+			else
+				return i
 		end
 	end
 	return nil
