@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-22 18:54:54
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-23 00:13:50
+-- @Last Modified time: 2019-07-23 09:42:11
 
 local component = require("component")
 -- using openOS
@@ -9,17 +9,7 @@ local robot = require("robot")
 local sides = require("sides")
 local inv = component.inventory_controller
 
-local ore_list = {}
-ore_list["minecraft:diamond_ore"]=-1
-ore_list["galacticraftcore:basic_block_core"]=8
-ore_list["galacticraftplanets:asteroids_block"]=4
-
-local repair_tool_side = sides.up
-local ore_src_side = sides.down
-local output_side = sides.up
-local max_use = 300
-
-local sleep_when_no_ores = 10
+dofile(fortune_miner.cfg)
 
 
 local function ore_slot()
@@ -46,7 +36,7 @@ local function mine()
 	robot.swing()
 	robot.suck()
 	use_count = use_count + 1
-	if use_count >= max_use
+	if use_count >= max_tool_use
 	then
 		repair_tool()
 		use_count = 0
