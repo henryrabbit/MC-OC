@@ -1,10 +1,9 @@
 -- @Author: FVortex
 -- @Date:   2019-07-22 18:54:54
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-23 10:34:51
+-- @Last Modified time: 2019-07-23 14:10:58
 
 local component = require("component")
--- using openOS
 local robot = require("robot")
 local sides = require("sides")
 local inv = component.inventory_controller
@@ -37,14 +36,11 @@ end
 
 local use_count = 0
 
+local swing_func = nil
 local function mine()
 	print("Mining...")
 	local swing_result = true
-	if swing_side == sides.front then swing_result, str = robot.swing() else
-	if swing_side == sides.up then swing_result, str = robot.swingUp() else
-	if swing_side == sides.down then swing_result, str = robot.swingDown() else
-		print("Invalid swing side settings! Please check swing_side settings. Valid sides: up, front, down")
-	end end end
+	swing_result, str = swing_func()
 	robot.suck()
 	if swing_result then
 		use_count = use_count + 1
@@ -59,13 +55,14 @@ local function mine()
 	end
 end
 
+local output_func = nil
 local function output()
 	print("Exporting minerals...")
 	for i = 1,16 do
 		local item_stack = inv.getStackInInternalSlot(i)
 		if item_stack and (not ore_list[item_stack.name]) then
 			robot.select(i)
-			inv.dropIntoSlot(output_side, 1)
+			output_func()
 		end
 	end
 	print("Export complete")
@@ -88,6 +85,29 @@ local function input_ore()
 	end
 end
 
+-- Convert config into function settings
+if (output_side == sides.front) then
+	output_func = robot.drop
+else if (output_side == sides.up) then
+	output_func = robot.dropUp
+else if (output_side == sides.down) then
+	output_func = robot.dropDown
+end end end
+
+local place_func = nil
+if swing_side == sides.front then
+	swing_func = robot.swing
+	place_func = robot.place
+else if qswing_side == sides.up then
+	swing_func = robot.swingUp
+	place_func = robot.placeUp
+else if swing_side == sides.down then
+	swing_func = robot.swingDown
+	place_func = robor.placeDown
+else
+	print("Invalid swing side settings! Please check swing_side settings. Valid sides: up, front, down")
+end end end
+
 while (true)
 do
 	placed_block, des = robot.detect()
@@ -99,8 +119,9 @@ do
 		slot = ore_slot()
 		if slot then
 			robot.select(slot)
-			robot.place()
+			place_func()
 		else
+			output()
 			input_ore()
 		end
 	end
