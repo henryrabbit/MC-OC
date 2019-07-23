@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-22 18:54:54
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-23 09:51:21
+-- @Last Modified time: 2019-07-23 10:03:16
 
 local component = require("component")
 -- using openOS
@@ -9,7 +9,7 @@ local robot = require("robot")
 local sides = require("sides")
 local inv = component.inventory_controller
 
-dofile(fortune_miner.cfg)
+dofile("fortune_miner.cfg")
 
 
 local function ore_slot()
@@ -23,6 +23,7 @@ local function ore_slot()
 				end
 			else
 				return i
+			end
 		end
 	end
 	return nil
@@ -72,7 +73,7 @@ local function input_ore()
 		end
 	end
 	if not import_success then
-		print("Nothing to import!")
+		print(string.format("Nothing to import! Robot will sleep for %d second(s).", sleep_when_no_ores))
 		os.sleep(sleep_when_no_ores)
 	end
 end
