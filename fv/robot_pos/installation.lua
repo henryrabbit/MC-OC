@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:17:59
+-- @Last Modified time: 2019-07-24 13:25:03
 
 
 -- For openOS
@@ -42,7 +42,7 @@ files = {"directions.lua", "init.lua", "position.cfg", "vector.lua"}
 
 to_usr_lib()
 create_dir("robot_pos")
-shell.setWorkingDirectory(lib_path)
+shell.setWorkingDirectory(string.format("%s/%s",lib_path,"robot_pos"))
 download_list(files, src_url)
 
 
