@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 11:07:07
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:31:35
+-- @Last Modified time: 2019-07-24 13:43:32
 
 
 local _directions = {}
@@ -12,7 +12,7 @@ _directions.east = 3
 _directions.Direction = {dir = 0}
 local sides = require("sides")
 
-local vector = dofile("./vector3.lua")
+local vector = dofile("vector3.lua")
 
 function _directions.Direction:new(o, offset_dir)
     o = o or {}
