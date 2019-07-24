@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 10:09:36
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:44:40
+-- @Last Modified time: 2019-07-24 17:18:48
 
 
 -- This is a positioning API for robots from OpenComputers
@@ -13,8 +13,11 @@ local robot = require("robot")
 local component = require("component")
 local sides = require("sides")
 
-local directions = dofile("directions.lua")
-local vector_api = dofile("vector.lua")
+local directions = require("util/directions")
+local vector_api = dofile("util/vector")
+local origin_x
+local origin_y
+local origin_z
 
 robot.direction = directions.north
 robot.position = vector_api.Vector3(nil,0,0,0)
@@ -87,6 +90,12 @@ function robot.setOffsetZ(z)
     origin_z = z
 end
 
+function robot.resetPos()
+    x = 0
+    y = 0
+    z = 0
+end
+
 -- Override from here
 robot.forward = nil
 robot.back = nil
@@ -143,5 +152,7 @@ function robot.turnAround()
     local r = turn() and turn()
     return r
 end
+
+robot.version = "1.0.0"
 
 return robot

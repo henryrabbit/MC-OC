@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 11:07:07
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:43:32
+-- @Last Modified time: 2019-07-24 17:19:58
 
 
 local _directions = {}
@@ -12,7 +12,7 @@ _directions.east = 3
 _directions.Direction = {dir = 0}
 local sides = require("sides")
 
-local vector = dofile("vector3.lua")
+local vector = require("robot_pos/vector3")
 
 function _directions.Direction:new(o, offset_dir)
     o = o or {}
@@ -55,6 +55,8 @@ end
 local directions = setmetatable(_directions, {
     __newindex = nil
 })
+
+directions.version = "1.0.0"
 
 return directions
 
