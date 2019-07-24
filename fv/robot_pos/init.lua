@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 10:09:36
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:29:48
+-- @Last Modified time: 2019-07-24 13:31:31
 
 
 -- This is a positioning API for robots from OpenComputers
@@ -34,6 +34,7 @@ function robot.getY(absolute)
         return y + origin_y
     else
         return y
+    end
 end
 
 function robot.getZ(absolute)
@@ -144,4 +145,3 @@ function robot.turnAround()
 end
 
 return robot
-end

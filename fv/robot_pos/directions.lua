@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 11:07:07
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:30:01
+-- @Last Modified time: 2019-07-24 13:31:35
 
 
 local _directions = {}
@@ -57,5 +57,5 @@ local directions = setmetatable(_directions, {
 })
 
 return directions
-end
+
 

@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:30:05
+-- @Last Modified time: 2019-07-24 13:31:39
 
 
 -- For openOS
@@ -49,8 +49,3 @@ remove_dir("robot_pos")
 create_dir("robot_pos")
 shell.setWorkingDirectory(string.format("%s/%s",lib_path,"robot_pos"))
 download_list(files, src_url)
-
-
-end
-
-
