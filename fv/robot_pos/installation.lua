@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:25:03
+-- @Last Modified time: 2019-07-24 13:26:50
 
 
 -- For openOS
@@ -37,10 +37,15 @@ local function download_list(url_list, root_url)
     return true
 end
 
+local function remove_dir(dir)
+    return shell.execute(string.format("rm -rf %s", dir))
+end
+
 src_url = "https://github.com/henryrabbit/MC-OC/raw/fvortex/fv/robot_pos/"
 files = {"directions.lua", "init.lua", "position.cfg", "vector.lua"}
 
 to_usr_lib()
+remove_dir("robot_pos")
 create_dir("robot_pos")
 shell.setWorkingDirectory(string.format("%s/%s",lib_path,"robot_pos"))
 download_list(files, src_url)
