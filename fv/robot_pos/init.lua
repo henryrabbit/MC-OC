@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 10:09:36
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:43:33
+-- @Last Modified time: 2019-07-24 13:44:40
 
 
 -- This is a positioning API for robots from OpenComputers
@@ -13,7 +13,7 @@ local robot = require("robot")
 local component = require("component")
 local sides = require("sides")
 
-local directions = dofile("direction.lua")
+local directions = dofile("directions.lua")
 local vector_api = dofile("vector.lua")
 
 robot.direction = directions.north
