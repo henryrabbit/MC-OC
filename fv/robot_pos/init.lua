@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 10:09:36
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:23:34
+-- @Last Modified time: 2019-07-24 13:29:48
 
 
 -- This is a positioning API for robots from OpenComputers
@@ -144,5 +144,4 @@ function robot.turnAround()
 end
 
 return robot
-
-
+end
