@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:06:23
+-- @Last Modified time: 2019-07-24 13:08:15
 
 
 -- For openOS
@@ -11,15 +11,15 @@ local fs = require("filesystem")
 
 local lib_path = "/usr/lib"
 
+local function create_dir(dir_name)
+    return shell.execute(string.format("mkdir %s", dir_name))
+end
+
 local function to_usr_lib()
     if not fs.exists(lib_path) then
         create_dir(lib_path)
     end
     return shell.execute(string.format("cd %s", lib_path))
-end
-
-local function create_dir(dir_name)
-    return shell.execute(string.format("mkdir %s", dir_name))
 end
 
 local function download_file(file_url)
