@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 17:48:52
+-- @Last Modified time: 2019-07-24 17:53:05
 
 
 -- For openOS
@@ -10,29 +10,7 @@ local package_control = {}
 local shell = require("shell")
 local fs = require("filesystem")
 
-local help_message = "
-pcfv < 子命令 >
-======================
-子命令
---------------
-install
-安装/升级程序/程序包
-install [-a|-l|-s] <程序名|URL> [安装位置]
--a 强制将程序作为应用下载到\"/usr/bin\"中
--l 强制将程序作为库下载到\"/usr/lib\"中
--s 强制将程序作为源代码下载到当前目录中
-
-<程序名|URL>
-程序名：将自动定位至本仓库的master分支，并根据仓库中的plist.txt文件找到URL进行下载
-URL：直接从URL下载
-
-[安装位置]
-用于自定义下载到本地的位置，若此参数不为空，则前面的[-a|-l|-s]无效
-
---------------
-help
-显示帮助信息
-"
+local help_message = "pcfv < 子命令 >\n======================\n子命令\n--------------\ninstall\n安装/升级程序/程序包\ninstall [-a|-l|-s] <程序名|URL> [安装位置]\n-a 强制将程序作为应用下载到\"/usr/bin\"中\n-l 强制将程序作为库下载到\"/usr/lib\"中\n-s 强制将程序作为源代码下载到当前目录中\n\n<程序名|URL>\n程序名：将自动定位至本仓库的master分支，并根据仓库中的plist.txt文件找到URL进行下载\nURL：直接从URL下载\n\n[安装位置]\n用于自定义下载到本地的位置，若此参数不为空，则前面的[-a|-l|-s]无效\n\n--------------\nhelp\n显示帮助信息\n"
 
 local bin_path = "/usr/bin"
 local lib_path = "/usr/lib"
