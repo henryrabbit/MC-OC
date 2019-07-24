@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 13:08:15
+-- @Last Modified time: 2019-07-24 13:17:59
 
 
 -- For openOS
@@ -19,7 +19,7 @@ local function to_usr_lib()
     if not fs.exists(lib_path) then
         create_dir(lib_path)
     end
-    return shell.execute(string.format("cd %s", lib_path))
+    return shell.setWorkingDirectory(lib_path)
 end
 
 local function download_file(file_url)
@@ -42,7 +42,7 @@ files = {"directions.lua", "init.lua", "position.cfg", "vector.lua"}
 
 to_usr_lib()
 create_dir("robot_pos")
-shell.execute(string.format("cd %s", "robot_pos"))
+shell.setWorkingDirectory(lib_path)
 download_list(files, src_url)
 
 
