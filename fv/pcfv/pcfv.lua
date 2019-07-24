@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 17:29:57
+-- @Last Modified time: 2019-07-24 17:48:52
 
 
 -- For openOS
@@ -78,12 +78,37 @@ local function read_env()
 end
 
 read_env()
+
+local cur_dir = shell.getWorkingDirectory()
+
 package_control.to_dir("/etc")
+os.remove("/etc/plist.lua")
 package_control.download_file(plist_url)
 
-local args = {...}
+plist = dofile("/etc/plist.lua")
 
-local subcmd = args[1]
+local args, ops = shell.parse(...)
+local target = ""
+if args[1] == "install" then
+    pack = plist[args[2]]
+    if ops[a] then target = bin_path end
+    if ops[l] then target = lib_path end
+    if ops[s] then target = cur_dir  end
+    if args[3] then target = args[3] end
+    package_control.to_dir(target)
 
-if subcmd == "install"
+    for k,v in pairs(pack) do
+        if v then
+            package_control.create_dir(k)
+        else
+            package_control.download_file(k)
+        end
+    end
+
+    package_control.to_dir(cur_dir)
+end
+
+if args[1] == "help" then print(help_message) end
+
+
 

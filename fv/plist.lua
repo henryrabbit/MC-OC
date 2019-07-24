@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 17:07:34
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 17:15:11
+-- @Last Modified time: 2019-07-24 17:46:55
 local plist = {}
 
 plist["fortune_miner"] = {
@@ -14,13 +14,18 @@ plist["fortune_miner"] = {
 
 plist["robot_pos"] = {
     type = "lib",
-    list = {"lib/robot_pos.lua"},
+    list = {"robot_pos.lua" = false},
     require = {"util"}
 }
 
 plist["util"] = {
     type = "lib",
-    list = {"lib/util/vector.lua", "lib/util/directions.lua", "path.lua"}
+    list = {
+        "util"=true,
+        "util/vector.lua"=false,
+        "util/directions.lua"=false,
+        "path.lua"=false
+    }
 }
 
 return plist
