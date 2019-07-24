@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 11:07:07
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 12:08:57
+-- @Last Modified time: 2019-07-24 13:23:58
 
 
 local _directions = {}
@@ -24,16 +24,16 @@ end
 
 function _directions.Direction:getVector()
     if self.dir == directions.north then
-        return Vector3:new(, 0, 0, -1)
+        return Vector3:new(nil, 0, 0, -1)
     else
         if self.dir == directions.south then
-            return Vector3:new(, 0, 0, 1)
+            return Vector3:new(nil, 0, 0, 1)
         else
             if self.dir == directions.east then
-                return Vector3:new(, 1, 0, 0)
+                return Vector3:new(nil, 1, 0, 0)
             else
                 if self.dir == directions.west then
-                    return Vector3:new(, -1, 0, 0)
+                    return Vector3:new(nil, -1, 0, 0)
                 else
                     return nil
                 end

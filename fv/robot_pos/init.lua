@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 10:09:36
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 12:17:52
+-- @Last Modified time: 2019-07-24 13:23:34
 
 
 -- This is a positioning API for robots from OpenComputers
@@ -17,7 +17,7 @@ local directions = dofile("./direction.lua")
 local vector_api = dofile("./vector.lua")
 
 robot.direction = directions.north
-robot.position = vector_api.Vector3(,0,0,0)
+robot.position = vector_api.Vector3(nil,0,0,0)
 
 dofile("position.cfg")
 
@@ -111,14 +111,14 @@ end
 
 function robot.up()
     local r, str = component.robot.move(sides.up)
-    if r then robot.position = robot.position + vector_api.Vector3(, 0, 1, 0) end
+    if r then robot.position = robot.position + vector_api.Vector3(nil, 0, 1, 0) end
     return r, str
 end
 
 
 function robot.down()
     local r, str = component.robot.move(sides.down)
-    if r then robot.position = robot.position + vector_api.Vector3(, 0, -1, 0) end
+    if r then robot.position = robot.position + vector_api.Vector3(nil, 0, -1, 0) end
     return r, str
 end
 
