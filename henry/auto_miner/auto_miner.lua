@@ -85,6 +85,7 @@ local function move_xz( x, z )
 			if move("forward")==false then
 				move("up")
 			end
+			get_charge()
 		end
 	end
 	if z!=location[3] then
@@ -95,6 +96,7 @@ local function move_xz( x, z )
 			if move("forward")==false then
 				move("up")
 			end
+			get_charge()
 		end
 	end
 end
@@ -143,19 +145,20 @@ local function analyze_xz()
 	local x=0
 	local z=0
 	if ore_scan(0, 0, analyze_times) then
-		return 0, 0
+		return location[1],location[3]
 	end
+	--蛇形搜索，从近到远遍历。
 	for i=1,analyze_radius*4 do
 		for j=1,i,2 do
 			x=x+forward_vector[tmpforward][1]
 			z=z+forward_vector[tmpforward][2]
 			if ore_scan(x, z, analyze_times) then
-				return x, z
+				return location[1]+x, location[3]+z
 			end
 		end
 		tmpforward = tmpforward%4+1
 	end
-	return forward_vector[forward][1]*analyze_radius,forward_vector[forward][2]*analyze_radius
+	return location[1]+forward_vector[forward][1]*analyze_radius,location[3]+forward_vector[forward][2]*analyze_radius
 end
 
 --小范围精确查找矿物确定挖掘范围
@@ -171,9 +174,12 @@ local function send_ore()
 	
 end
 
---拿电池充电
+--判断并拿电池充电
 local function get_charge()
-
+	if computer.energy()>10000 then
+		return
+	end
+	
 end
 
 --初始化(不必要)，通过放置方块并检测确定前方方向并标记,通过下降检测下方基岩确定高度，xz使用相对坐标系,可初始化。
@@ -189,3 +195,19 @@ end
 --不存在的没有设计的通信函数
 
 --暂时不存在的主程序
+moveto_y(ore_depth)
+send_ore()
+get_charge()
+while true do
+	local tox,toz = analyze_xz()
+	move_xz(tox,toz)
+	moveto_y(ore_depth)
+	send_ore()
+	get_charge()
+	local miny,maxy = analyze_y()
+	moveto_y(miny)
+	moveto_y(maxy)
+	moveto_y(ore_depth)
+	send_ore()
+	get_charge()
+end
