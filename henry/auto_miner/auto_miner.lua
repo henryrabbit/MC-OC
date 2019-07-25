@@ -18,6 +18,9 @@ local forward_vector = {{0,-1},{-1,0},{0,1},{1,0}}
 --当前面对方向
 local forward = 1
 
+local lowerbound = max(-analyze_depth, 6-ore_depth)
+local upperbound = analyze_depth
+
 dofile("auto_miner.cfg")
 
 --试图向某个方向先挖掘后移动并返回是否成功
@@ -96,14 +99,69 @@ local function move_xz( x, z )
 	end
 end
 
+--汇报地牢坐标？？
+local function find_dungeon
+
+end
+
+local function ore_scan( x, z, t)
+	local ans = analyzer.scan(x,z)
+	for i = 2, t do
+		local tmp = component.geolyzer.scan(x,z)
+		for j = 33+lowerbound, 33+upperbound do
+			ans[j] = ans[j] + tmp[j]
+		end
+	end
+	local minore=33
+	local maxore=33
+	local numore=0
+	for j = 33+lowerbound, 33+upperbound do
+		ans[j] = ans[j]/t
+		if 4.5<ans[j] and ans[j]<5.5 then
+			numore = numore+1
+			minore = min(minore, j)
+			maxore = max(maxore, j)
+		else if 3.5<ans[j] and ans[j]<4.5 then
+			numore = numore-2
+		else if ans[j]>90000
+			numore = numore-100000
+		end end end
+	end
+	if numore<=-10 then 
+		find_dungeon()
+	end
+	if numore>0 then
+		return true,minore-33,maxore-33
+	else
+		return false,0,0
+	end
+end
+
 --大范围按顺序地模糊分析寻找矿物确定前往区域
 local function analyze_xz()
-
+	local tmpforward = 1
+	local x=0
+	local z=0
+	if ore_scan(0, 0, analyze_times) then
+		return 0, 0
+	end
+	for i=1,analyze_radius*4 do
+		for j=1,i,2 do
+			x=x+forward_vector[tmpforward][1]
+			z=z+forward_vector[tmpforward][2]
+			if ore_scan(x, z, analyze_times) then
+				return x, z
+			end
+		end
+		tmpforward = tmpforward%4+1
+	end
+	return forward_vector[forward][1]*analyze_radius,forward_vector[forward][2]*analyze_radius
 end
 
 --小范围精确查找矿物确定挖掘范围
 local function analyze_y()
-
+	local a,b,c = ore_scan(0, 0, detail_analyze_times)
+	return location[2]+b, location[2]+c
 end
 
 --往回丢产物
