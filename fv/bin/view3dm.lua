@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-27 16:28:45
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-27 17:43:08
+-- @Last Modified time: 2019-07-27 17:45:43
 
 local component = require("component")
 local shell = require("shell")
@@ -61,6 +61,11 @@ local off_z = ops.z or 0
 local loop = ops.l
 local state = ops.t or false
 local uni_color = ops.u
+local scale = ops.scale
+if scale then
+    hologram.setScale(tonumber(scale))
+    io.write(string.format("Scale: %f\n", hologram.getScale))
+end
 
 local function spc_check(i, c)
     hologram.setPaletteColor(i, c or hologram.getPaletteColor(i))
