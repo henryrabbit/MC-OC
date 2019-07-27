@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-27 16:28:45
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-27 17:53:52
+-- @Last Modified time: 2019-07-27 17:58:45
 
 local component = require("component")
 local shell = require("shell")
@@ -54,16 +54,18 @@ data = data()
 io.write("Loading shapes...\n")
 
 
-local off_x = ops.x or 0
-local off_y = ops.y or 0
-local off_z = ops.z or 0
+local off_x = tonumber(ops.x) or 0
+local off_y = tonumber(ops.y) or 0
+local off_z = tonumber(ops.z) or 0
 
-local loop = ops.l
+hologram.setTranslation(off_x, off_y, off_z)
+
+local loop = tonumber(ops.l)
 local state = ops.t or false
-local uni_color = ops.u
-local scale = ops.scale
+local uni_color = tonumber(ops.u)
+local scale = tonumber(ops.scale)
 if scale then
-    hologram.setScale(tonumber(scale))
+    hologram.setScale(scale)
     io.write(string.format("Scale: %f\n", hologram.getScale))
 end
 
@@ -97,7 +99,7 @@ local function showHolo(state)
     end
 end
 
-hologram.setTranslation(off_x, off_y, off_z)
+
 
 if loop then
     while true do
