@@ -23,7 +23,8 @@ URL：直接从URL下载
 
 # 安装
 ```
-cd /bin
+mkdir /usr/bin
+cd /usr/bin
 wget https://github.com/henryrabbit/MC-OC/raw/master/fv/pcfv/pcfv.lua
 ```
 下载完成即可使用

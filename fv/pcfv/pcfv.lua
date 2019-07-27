@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-24 12:46:14
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-24 17:53:05
+-- @Last Modified time: 2019-07-24 19:18:55
 
 
 -- For openOS
@@ -14,8 +14,8 @@ local help_message = "pcfv < 子命令 >\n======================\n子命令\n---
 
 local bin_path = "/usr/bin"
 local lib_path = "/usr/lib"
-local src_url = "https://github.com/henryrabbit/MC-OC/raw/master/fv"
-local plist_url = "https://github.com/henryrabbit/MC-OC/raw/master/fv/plist.lua"
+local src_url = "https://github.com/henryrabbit/MC-OC/raw/fvortex/fv"
+local plist_url = "https://github.com/henryrabbit/MC-OC/raw/fvortex/fv/plist.lua"
 
 function package_control.create_dir(dir_name)
     return shell.execute(string.format("mkdir %s", dir_name))
@@ -33,12 +33,12 @@ function package_control.to_dir(dir)
 end
 
 
-local function package_control.download_file(file_url)
+function package_control.download_file(file_url)
     print(string.format("Downloading %s", file_url))
     return shell.execute(string.format("wget %s", file_url))
 end
 
-local function package_control.download_list(url_list, root_url)
+function package_control.download_list(url_list, root_url)
     local s = true
     if not root_url then root_url = "" end
     for k, v in ipairs(url_list) do
@@ -55,6 +55,28 @@ local function read_env()
     lib_path = os.getenv("PCFV_LIB_PATH") or lib_path
 end
 
+local path = {}
+
+function path.join( ... )
+    local args = { ... }
+    local s = ""
+    for i = 1,..,#args do
+        s = string.format("%s/%s", s, args[i])
+    end
+    return s
+end
+
+function path.split(str)
+    local result = {}
+    local split_pos = string.find(str, "/")
+    local entry
+    while split_pos do
+        table.insert(result, string.sub(str, 1, split_pos - 1))
+        str = string.sub(str, split_pos+1)
+    end
+    return result
+end
+
 read_env()
 
 local cur_dir = shell.getWorkingDirectory()
@@ -67,23 +89,33 @@ plist = dofile("/etc/plist.lua")
 
 local args, ops = shell.parse(...)
 local target = ""
+
+local function install(pack_name, target)
+    pack = plist[pack_name]
+    package_control.to_dir(target)
+    dir_list = pack.dir_list
+    list = pack.list
+    for i,v in ipairs(dir_list) do
+        package_control.create_dir(v)
+    end
+
+    for i,v in ipairs(list) do
+        path = path.split(v)
+        if #path ~= 1 then
+            package_control.to_dir(path.join())
+    end
+
+    package_control.to_dir(cur_dir)
+end
 if args[1] == "install" then
-    pack = plist[args[2]]
+    if pack._type == "app" then target = bin_path end
+    if pack._type == "lib" then target = lib_path end
+    if pack._type == "src" then target = cur_dir  end
     if ops[a] then target = bin_path end
     if ops[l] then target = lib_path end
     if ops[s] then target = cur_dir  end
     if args[3] then target = args[3] end
-    package_control.to_dir(target)
-
-    for k,v in pairs(pack) do
-        if v then
-            package_control.create_dir(k)
-        else
-            package_control.download_file(k)
-        end
-    end
-
-    package_control.to_dir(cur_dir)
+    install (args[2], target)
 end
 
 if args[1] == "help" then print(help_message) end
