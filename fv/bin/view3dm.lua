@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-27 16:28:45
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-27 17:32:41
+-- @Last Modified time: 2019-07-27 17:43:08
 
 local component = require("component")
 local shell = require("shell")
@@ -54,9 +54,9 @@ data = data()
 io.write("Loading shapes...\n")
 
 
-local off_x = ops.x or 1
-local off_y = ops.y or 1
-local off_z = ops.z or 1
+local off_x = ops.x or 0
+local off_y = ops.y or 0
+local off_z = ops.z or 0
 
 local loop = ops.l
 local state = ops.t or false
@@ -74,6 +74,7 @@ local function showHolo(state)
     local color_count = 1
     hologram.clear()
     for i, shape in ipairs(data.shapes or {}) do
+        shape.state = shape.state or false
         if shape.state == state then
             -- Get color settings from shell or automatically allocate colors to shapes
             local color = ops[shape.texture]
@@ -83,14 +84,14 @@ local function showHolo(state)
             end
             for x = shape[1], shape[4]-1 do
                 for z = shape[3], shape[6]-1 do
-                    hologram.fill(x, z, shape[2], shape[5]-1, uni_color or color + 1)
+                    hologram.fill(x + 1, z + 1, shape[2] + 1, shape[5], uni_color or color + 1)
                 end
             end
         end
     end
 end
 
-hologram.setTransformation(off_x, off_y, off_z)
+hologram.setTranslation(off_x, off_y, off_z)
 
 if loop then
     while true do
