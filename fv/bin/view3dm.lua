@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-27 16:28:45
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-27 17:45:43
+-- @Last Modified time: 2019-07-27 17:53:52
 
 local component = require("component")
 local shell = require("shell")
@@ -68,7 +68,8 @@ if scale then
 end
 
 local function spc_check(i, c)
-    hologram.setPaletteColor(i, c or hologram.getPaletteColor(i))
+    c = c or hologram.getPaletteColor(i)
+    hologram.setPaletteColor(i, tonumber(c))
 end
 
 spc_check(1, ops.c1)
