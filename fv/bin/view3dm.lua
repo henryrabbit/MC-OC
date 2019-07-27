@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-27 16:28:45
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-27 18:29:53
+-- @Last Modified time: 2019-07-27 18:39:02
 
 local component = require("component")
 local shell = require("shell")
@@ -30,7 +30,15 @@ local hologram = component.hologram
 local args, ops = shell.parse(...)
 
 if #args < 1 then
-  io.write("Usage: view3dm FILE [count]\n")
+  io.write([[Usage: view3dm [options] FILE
+    --x, --y, --z : Set the offset translation, 0 by default
+    -t : Show model when state=true
+    -u : Show model in uniformed color
+    --u : Show model in uniformed color with specified color index (1 by default, [1,2,3] is available)
+    --scale : Set the scale of hologram, range:[0.33, 3]
+    --c1, --c2, --c3: Set the palette of hologram, value in RGB code.
+    --[texture name]: Specify the color id for texture
+]])
   os.exit(0)
 end
 
