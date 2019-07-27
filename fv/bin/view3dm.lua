@@ -1,7 +1,7 @@
 -- @Author: FVortex
 -- @Date:   2019-07-27 16:28:45
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-27 17:58:45
+-- @Last Modified time: 2019-07-27 18:23:26
 
 local component = require("component")
 local shell = require("shell")
@@ -66,12 +66,13 @@ local uni_color = tonumber(ops.u)
 local scale = tonumber(ops.scale)
 if scale then
     hologram.setScale(scale)
-    io.write(string.format("Scale: %f\n", hologram.getScale))
+    io.write(string.format("Scale: %f\n", hologram.getScale()))
 end
 
 local function spc_check(i, c)
-    c = c or hologram.getPaletteColor(i)
-    hologram.setPaletteColor(i, tonumber(c))
+    c = tonumber(c) or hologram.getPaletteColor(i)
+    hologram.setPaletteColor(i, c)
+    io.write(string.format("Set palette color %d to %d.\n", i, c))
 end
 
 spc_check(1, ops.c1)
@@ -82,8 +83,7 @@ local function showHolo(state)
     local color_count = 1
     hologram.clear()
     for i, shape in ipairs(data.shapes or {}) do
-        shape.state = shape.state or false
-        if shape.state == state then
+        if (shape.state ~= state) or (shape.state == nil) then
             -- Get color settings from shell or automatically allocate colors to shapes
             local color = ops[shape.texture]
             if not color then
@@ -99,17 +99,17 @@ local function showHolo(state)
     end
 end
 
+showHolo(state)
 
-
-if loop then
-    while true do
-        state = not state
-        showHolo(state)
-        os.sleep(loop)
-    end
-else
-    showHolo(state)
-end
+-- if loop then
+--     while true do
+--         state = not state
+--         showHolo(state)
+--         os.sleep(loop)
+--     end
+-- else
+--     showHolo(state)
+-- end
 
 
 
