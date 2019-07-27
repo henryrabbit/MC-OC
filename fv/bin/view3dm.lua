@@ -1,8 +1,9 @@
 -- @Author: FVortex
 -- @Date:   2019-07-27 16:28:45
 -- @Last Modified by:   TowardtheStars
--- @Last Modified time: 2019-07-27 18:39:02
+-- @Last Modified time: 2019-07-27 18:41:03
 
+-- Use holograms to display .3dm files defined by Sangar
 local component = require("component")
 local shell = require("shell")
 --------------------------------------------------
@@ -15,12 +16,12 @@ for address in component.list("hologram") do
   print(#addresses .. ": " .. address)
 end
 if #addresses > 1 then
-  io.write("Choose printer: ")
+  io.write("Choose hologram: ")
   local index
   repeat
     index = tonumber(io.read("*n"))
     if not (index and addresses[index]) then
-      io.write("\nInvalid index!\nChoose printer: ")
+      io.write("\nInvalid index!\nChoose hologram: ")
     end
   until index and addresses[index]
   component.setPrimary("hologram", addresses[index])
