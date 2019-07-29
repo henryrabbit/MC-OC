@@ -58,7 +58,65 @@ local function turn()
 	else return false
 	end
 end
-		
+
+
+--判断并拿电池充电
+local function get_charge()
+	robot.select(empty_slot)
+	inv.equip()
+	local tmp = inv.getStackInInternalSlot(empty_slot).Energy
+	inv.equip()
+	robot.select(1)
+	if computer.energy()>10000 and tmp>200000 then
+		return
+	end
+	robot.swingUp()
+	robot.swingDown()
+	while robot.detectUp() or robot.detectDown() do
+		move("forward")
+		robot.swingUp()
+		robot.swingDown()
+	end
+	robot.select(powerbox_slot)
+	robot.placeDown()
+	robot.select(empty_slot)
+	robot.suckDown()
+	robot.select(powerbox_slot)
+	robot.swingDown()
+	robot.select(empty_slot)
+	robot.placeDown()
+	move("up")
+	robot.select(charger_slot)
+	robot.placeDown()
+	robot.select(empty_slot)
+	inv.equip()
+	robot.dropDown()
+	while not robot.suckDown() do
+		os.sleep(2)
+	end
+	inv.equip()
+	robot.select(charger_slot)
+	robot.swingDown()
+	robot.select(poweraccepter_slot)
+	robot.placeDown()
+	component.redstone.setOutput(sides.down,15)
+	while computer.energy()<computer.maxEnergy()-100 do
+		os.sleep(5)
+	end
+	component.redstone.setOutput(sides.down,0)
+	robot.swingDown()
+	move("down")
+	robot.select(empty_slot)
+	robot.swingDown()
+	robot.select(powerbox_slot)
+	robot.placeDown()
+	robot.select(empty_slot)
+	robot.dropDown()
+	robot.select(powerbox_slot)
+	robot.swingDown()
+	robot.select(1)
+end
+
 --躲避障碍走向指定的y坐标
 local function moveto_y( y )
 	while location[2] < y do
@@ -85,7 +143,9 @@ local function move_xz( x, z )
 			if move("forward")==false then
 				move("up")
 			end
-			get_charge()
+			if x%100==0 then
+				get_charge()
+			end
 		end
 	end
 	if z~=location[3] then
@@ -96,48 +156,55 @@ local function move_xz( x, z )
 			if move("forward")==false then
 				move("up")
 			end
-			get_charge()
+			if z%100==0 then
+				get_charge()
+			end
 		end
 	end
 end
 
 --汇报地牢坐标？？
 local function find_dungeon()
- 
+	return
 end
 
-local function ore_scan( x, z, t)
-	print("scanning",x,z,t)
-	local ans = component.geolyzer.scan(x,z)
-	for i = 2, t do
-		local tmp = component.geolyzer.scan(x,z)
-		for j = 33+lowerbound, 33+upperbound do
-			ans[j] = ans[j] + tmp[j]
-		end
-	end
+local function noise( x, y, z)
+	return math.sqrt(x*x+y*y+z*z)/16
+end
+
+local function ore_scan( x, z)
+	print("scanning",x,z)
 	local minore=33
 	local maxore=33
-	local numore=0
-	for j = 33+lowerbound, 33+upperbound do
-		ans[j] = ans[j]/t
-		if 4.5<ans[j] and ans[j]<5.5 then
-			numore = numore+1
-			minore = math.min(minore, j)
-			maxore = math.max(maxore, j)
-		else if 3.5<ans[j] and ans[j]<4.5 then
-			numore = numore-2
-		else if ans[j]>90000 then
-			numore = numore-100000
-		end end end
+	local unsurenum=upperbound - lowerbound + 1
+	local ans = {}
+	local flag = false
+	while unsurenum>0 do
+		local tmp = component.geolyzer.scan(x,z)
+		for j = 33+lowerbound, 33+upperbound do
+			local tmpnoi = noise(x,j-33,z)
+			if not ans[j] then
+				if tmp[j]<=2+tmpnoi then
+					ans[j]=0
+					unsurenum = unsurenum-1
+				else if tmp[j]<5-tmpnoi or tmp[j]>90000 then
+					find_dungeon()
+					return false,0,0
+				else if tmp[j]>4+tmpnoi and tmp[j]<5+tmpnoi then
+					ans[j]=1
+					unsurenum = unsurenum - 1
+					minore = math.min(minore,j)
+					maxore = math.max(maxore,j)
+					flag=true
+				else if tmp[j]>5+tmpnoi then
+					ans[j]=2
+					unsurenum = unsurenum-1
+				end end end end			
+			end
+		end
 	end
-	if numore<=-10 then 
-		find_dungeon()
-	end
-	if numore>0 then
-		return true,minore-33,maxore-33
-	else
-		return false,0,0
-	end
+	if flag then print("findore!") end
+	return flag,minore-33,maxore-33
 end
 
 --大范围按顺序地模糊分析寻找矿物确定前往区域
@@ -153,7 +220,7 @@ local function analyze_xz()
 		for j=1,i,2 do
 			x=x+forward_vector[tmpforward][1]
 			z=z+forward_vector[tmpforward][2]
-			if ore_scan(x, z, analyze_times) then
+			if ore_scan(x, z) then
 				return location[1]+x, location[3]+z
 			end
 		end
@@ -164,12 +231,17 @@ end
 
 --小范围精确查找矿物确定挖掘范围
 local function analyze_y()
-	local a,b,c = ore_scan(0, 0, detail_analyze_times)
+	local a,b,c = ore_scan(0, 0)
 	return location[2]+b, location[2]+c
 end
 
 --往回丢产物
 local function send_ore()
+	robot.select(8)
+	if not inv.getStackInInternalSlot(i) then
+		robot.select(1)
+		return
+	end
 	robot.swingDown()
 	while robot.detectDown() do
 		move("forward")
@@ -178,9 +250,9 @@ local function send_ore()
 	robot.select(orebox_slot)
 	robot.placeDown()
 	for i=1,16 do
-		if ore_slot[i] then
-			robot.select(i)
+		if ore_slot[i] then			
 			if inv.getStackInInternalSlot(i) then
+				robot.select(i)
 				for j = 1,inv.getStackInInternalSlot(i).size do
 					robot.dropDown()
 				end
@@ -189,77 +261,39 @@ local function send_ore()
 	end
 	robot.select(orebox_slot)
 	robot.swingDown()
+	robot.select(1)
 end
 
---判断并拿电池充电
-local function get_charge()
-	robot.select(empty_slot)
-	inv.equip()
-	local tmp = inv.getStackInInternalSlot(empty_slot).Energy
-	inv.equip()
-	robot.select(ore_slot[1])
-	if computer.energy()>10000 and tmp>200000 then
-		return
-	end
-	robot.swingUp()
-	robot.swingDown()
-	while robot.detectUp() or robot.detectDown() do
-		move("forward")
-		robot.swingUp()
-		robot.swingDown()
-	end
-	robot.select(powerbox_slot)
-	robot.placeDown()
-	robot.select(empty_slot)
-	robot.suckDown()
-	robot.select(powerbox_slot)
-	robot.swingDown()
-	robot.select(empty_slot)
-	robot.placeDown()
-	move("up")
-	robot.select(charger_slot)
-	robot.placeDown()
-	robot.select(empty_slot)
-	inv.equip()
-	robot.dropDown()
-	os.sleep(5)
-	robot.suckDown()
-	inv.equip()
-	robot.select(charger_slot)
-	robot.swingDown()
-	robot.select(poweraccepter_slot)
-	robot.placeDown()
-	component.redstone.setOutput(sides.down,15)
-	while computer.energy()<=20000 do
-		os.sleep(10)
-	end
-	component.redstone.setOutput(sides.down,0)
-	robot.swingDown()
-	move("down")
-	robot.select(empty_slot)
-	robot.swingDown()
-	robot.select(powerbox_slot)
-	robot.placeDown()
-	robot.select(empty_slot)
-	robot.dropDown()
-	robot.select(powerbox_slot)
-	robot.swingDown()
-	robot.select(ore_slot[1])
-end
-
---初始化(不必要)，通过放置方块并检测确定前方方向并标记,通过下降检测下方基岩确定高度，xz使用相对坐标系,可初始化。
+--初始化，通过放置方块并检测确定前方方向并标记.
+-- 其实还可以通过下降检测下方基岩确定高度，但是反正你得初始化坐标，我就懒得写了。
 local function init_work()
-
+	robot.select(orebox_slot)
+	while true do
+		robot.swing()
+		ans=component.geolyzer.scan(0,-1)[33]
+		robot.place()
+		ans=component.geolyzer.scan(0,-1)[33]-ans
+		robot.swing()
+		if ans>10 then
+			robot.select(1)
+			return
+		else
+			robot.turnLeft()
+		end
+	end
 end
 
 --结束工作，收到某种信号后试图返回最开始放置机器人的地方
 local function finish_work()
-
+	move_xz(baselocation[1], baselocation[3])
+	moveto_y(baselocation[2])
+	computer.shutdown()
 end
 
 --不存在的没有设计的通信函数
 
---暂时不存在的主程序
+--偷工减料的劣质主程序
+init_work()
 moveto_y(ore_depth)
 send_ore()
 get_charge()
@@ -270,6 +304,7 @@ while true do
 	send_ore()
 	get_charge()
 	local miny,maxy = analyze_y()
+	print("scaninghere",miny,maxy)
 	moveto_y(miny)
 	moveto_y(maxy)
 	moveto_y(ore_depth)
