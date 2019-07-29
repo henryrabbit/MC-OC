@@ -20,8 +20,9 @@ end
 
 local printer = component.printer3d
 
-local help_msg = [[Usage: print3d [options] FILE [FILE2 [FILE3 ...] ]
+local help_msg = [[Usage: print3d [options] FILE [count] ]
 FILE : .3dm file to print, if u want to print more than 1 file, seperate them with space
+count : How many copies should it print
 
 -x, -y, -z : Reverse the model on axis x|y|z
 -t : Only print activated state (into the deactivated state of print result)
@@ -68,7 +69,7 @@ local function readData(path)
   return data()
 end
 
-local function printData(data)
+local function printData(data, count)
   io.write("Configuring...\n")
   printer.reset()
   if data.label then
@@ -144,10 +145,11 @@ local function printData(data)
   else
     io.stderr:write("Failed committing job: " .. tostring(reason) .. "\n")
   end
+
 end
 
-for i, v in ipairs(args) do
-  printData(readData(v))
-end
+count = tonumber(args[2]) or 1
+printData(readData(args[1]), 1)
+
 
 
