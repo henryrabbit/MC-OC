@@ -9,7 +9,10 @@ local component = require("component")
 local robot = require("robot")
 local sides = require("sides")
 local computer = require("computer")
+local event = require("event")
 local inv = component.inventory_controller
+local tunnel = coponent.tunnel
+local lastdungeon = {-1000000000,-1000000000}
 
 local location = {baselocation[1], baselocation[2], baselocation[3]}
 print(location[1],location[2],location[3])
@@ -143,8 +146,9 @@ local function move_xz( x, z )
 			if move("forward")==false then
 				move("up")
 			end
-			if x%100==0 then
+			if location[1]%12==0 then
 				get_charge()
+				tunnel.send("location",location[1],location[2],location[3])
 			end
 		end
 	end
@@ -156,8 +160,9 @@ local function move_xz( x, z )
 			if move("forward")==false then
 				move("up")
 			end
-			if z%100==0 then
+			if location[3]%12==0 then
 				get_charge()
+				tunnel.send("location",location[1],location[2],location[3])
 			end
 		end
 	end
@@ -169,7 +174,11 @@ local function find_dungeon()
 end
 
 local function noise( x, y, z)
-	return math.sqrt(x*x+y*y+z*z)/16
+	if math.abs(x-lastdungeon[1])>100 or math.abs(z-lastdungeon[2])>100 then
+		lastdungeon[1]=x
+		lastdungeon[2]=z
+		tunnel.send("dungeon",x,z)
+	end	
 end
 
 local function ore_scan( x, z)
@@ -290,14 +299,22 @@ local function finish_work()
 	computer.shutdown()
 end
 
---不存在的没有设计的通信函数
+
+--后台运行接受控制信息的通信函数
+local workingflag=1
+local function finishmessage(tcard, fcar, tport, fport, ...)
+	if ...[1]=="back!" then
+		workingflag=0
+	end
+end
+event.listen("modem_message",finishmessage)
 
 --偷工减料的劣质主程序
 init_work()
 moveto_y(ore_depth)
 send_ore()
 get_charge()
-while true do
+while workingflag==1 do
 	local tox,toz = analyze_xz()
 	move_xz(tox,toz)
 	moveto_y(ore_depth)
@@ -311,3 +328,4 @@ while true do
 	send_ore()
 	get_charge()
 end
+finish_work()
