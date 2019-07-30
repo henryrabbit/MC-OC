@@ -11,7 +11,7 @@ local sides = require("sides")
 local computer = require("computer")
 local event = require("event")
 local inv = component.inventory_controller
-local tunnel = coponent.tunnel
+local tunnel = component.tunnel
 local lastdungeon = {-1000000000,-1000000000}
 
 local location = {baselocation[1], baselocation[2], baselocation[3]}
@@ -169,16 +169,16 @@ local function move_xz( x, z )
 end
 
 --汇报地牢坐标？？
-local function find_dungeon()
-	return
-end
-
-local function noise( x, y, z)
+local function find_dungeon(x,z)
 	if math.abs(x-lastdungeon[1])>100 or math.abs(z-lastdungeon[2])>100 then
 		lastdungeon[1]=x
 		lastdungeon[2]=z
 		tunnel.send("dungeon",x,z)
 	end	
+end
+
+local function noise( x, y, z)
+	return math.sqrt(x*x+y*y+z*z)/16
 end
 
 local function ore_scan( x, z)
@@ -197,7 +197,7 @@ local function ore_scan( x, z)
 					ans[j]=0
 					unsurenum = unsurenum-1
 				else if tmp[j]<5-tmpnoi or tmp[j]>90000 then
-					find_dungeon()
+					find_dungeon(location[1]+x,location[3]+z)
 					return false,0,0
 				else if tmp[j]>4+tmpnoi and tmp[j]<5+tmpnoi then
 					ans[j]=1
@@ -302,8 +302,8 @@ end
 
 --后台运行接受控制信息的通信函数
 local workingflag=1
-local function finishmessage(tcard, fcar, tport, fport, ...)
-	if ...[1]=="back!" then
+local function finishmessage(tcard, fcar, tport, fport, str, ...)
+	if str=="back!" then
 		workingflag=0
 	end
 end
