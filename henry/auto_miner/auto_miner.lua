@@ -83,7 +83,9 @@ local function get_charge()
 	robot.select(powerbox_slot)
 	robot.placeDown()
 	robot.select(empty_slot)
-	robot.suckDown()
+	while not robot.suckDown() do
+		os.sleep(10)
+	end
 	robot.select(powerbox_slot)
 	robot.swingDown()
 	robot.select(empty_slot)
@@ -173,7 +175,7 @@ local function find_dungeon(x,z)
 	if math.abs(x-lastdungeon[1])>100 or math.abs(z-lastdungeon[2])>100 then
 		lastdungeon[1]=x
 		lastdungeon[2]=z
-		tunnel.send("dungeon",x,z)
+		tunnel.send("dungeon",x,"?",z)
 	end	
 end
 
@@ -246,7 +248,7 @@ end
 
 --往回丢产物
 local function send_ore()
-	robot.select(8)
+	robot.select(ore_max)
 	if not inv.getStackInInternalSlot(i) then
 		robot.select(1)
 		return
@@ -302,10 +304,12 @@ end
 
 --后台运行接受控制信息的通信函数
 local workingflag=1
-local function finishmessage(tcard, fcar, tport, fport, str, ...)
+local function finishmessage(messagetype, tcard, fcar, tport, fport, str, ...)
+	print("message", str)
 	if str=="back!" then
 		workingflag=0
 	end
+	return
 end
 event.listen("modem_message",finishmessage)
 
@@ -315,6 +319,7 @@ moveto_y(ore_depth)
 send_ore()
 get_charge()
 while workingflag==1 do
+	print("work",workingflag)
 	local tox,toz = analyze_xz()
 	move_xz(tox,toz)
 	moveto_y(ore_depth)
