@@ -13,7 +13,6 @@ local function mymessage(messagetype, tcard, fcard, tport, fport, str, x, y, z)
 	else if str=="dungeon" then
 		file = io.open("dungeons","a")
 	end end
-	-- io.output(file)
 	file:write(tcard.." "..str.." "..x.." "..y.." "..z.."\n")
 	file:close()
 	return

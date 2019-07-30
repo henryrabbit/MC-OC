@@ -84,7 +84,8 @@ local function get_charge()
 	robot.placeDown()
 	robot.select(empty_slot)
 	while not robot.suckDown() do
-		os.sleep(10)
+		event.pull(1,"nothing")
+		--os.sleep(10)
 	end
 	robot.select(powerbox_slot)
 	robot.swingDown()
@@ -97,7 +98,8 @@ local function get_charge()
 	inv.equip()
 	robot.dropDown()
 	while not robot.suckDown() do
-		os.sleep(2)
+		event.pull(1,"nothing")
+		--os.sleep(2)
 	end
 	inv.equip()
 	robot.select(charger_slot)
@@ -106,7 +108,8 @@ local function get_charge()
 	robot.placeDown()
 	component.redstone.setOutput(sides.down,15)
 	while computer.energy()<computer.maxEnergy()-100 do
-		os.sleep(5)
+		event.pull(1,"nothing")
+		--os.sleep(5)
 	end
 	component.redstone.setOutput(sides.down,0)
 	robot.swingDown()
@@ -150,7 +153,7 @@ local function move_xz( x, z )
 			end
 			if location[1]%12==0 then
 				get_charge()
-				tunnel.send("location",location[1],location[2],location[3])
+				tunnel.send("location",tostring(location[1]),tostring(location[2]),tostring(location[3]))
 			end
 		end
 	end
@@ -164,7 +167,7 @@ local function move_xz( x, z )
 			end
 			if location[3]%12==0 then
 				get_charge()
-				tunnel.send("location",location[1],location[2],location[3])
+				tunnel.send("location",tostring(location[1]),tostring(location[2]),tostring(location[3]))
 			end
 		end
 	end
@@ -175,7 +178,7 @@ local function find_dungeon(x,z)
 	if math.abs(x-lastdungeon[1])>100 or math.abs(z-lastdungeon[2])>100 then
 		lastdungeon[1]=x
 		lastdungeon[2]=z
-		tunnel.send("dungeon",x,"?",z)
+		tunnel.send("dungeon",tostring(x),"?",tostring(z))
 	end	
 end
 
