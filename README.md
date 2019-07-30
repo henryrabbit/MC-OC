@@ -34,6 +34,8 @@
 
 在Sangar的print3d程序的基础上修改而来，增加了许多选项
 
+模型格式：由Sangar定义的3dm格式，[模版](https://github.com/henryrabbit/MC-OC/blob/master/fv/models/example.3dm)
+
 使用方法：请在游戏中电脑命令行输入`print3d`查看/看源码自带的帮助信息字符串
 
 ### midi-fv
