@@ -6,17 +6,16 @@ local function mymessage(messagetype, tcard, fcard, tport, fport, str, x, y, z)
 	print("get a message to ",tcard)
 	print("about ",str)
 	print("at",x,y,z)
+	local file
 	if str=="location" then
-		local file = io.open(tcard,"w")
-		io.output(file)
-		io.write(tcard," ",str," ",x," ",y," ",z"\n")
-		io.close(file)
+		file = io.open(tcard,"w")
+		
 	else if str=="dungeon" then
-		local file = io.open("dungeons","a")
-		io.output(file)
-		io.write(tcard," ",str," ",x," ",y," ",z"\n")
-		io.close(file)
+		file = io.open("dungeons","a")
 	end end
+	-- io.output(file)
+	file:write(tcard.." "..str.." "..x.." "..y.." "..z.."\n")
+	file:close()
 	return
 end
 
