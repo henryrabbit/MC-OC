@@ -20,3 +20,4 @@ local function mymessage(messagetype, tcard, fcard, tport, fport, str, x, y, z)
 end
 
 event.listen("modem_message",mymessage)
+print("Log service starts successfully! Please use cat to check logs.")
