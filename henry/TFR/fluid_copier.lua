@@ -21,17 +21,18 @@ local function copy()
     robot.select(tank_slot)
     robot.drop()
     robot.suck()
-    robot.up()
     inv.equip()
-    for i = 1, 16 do
-        robot.use(sides.back)
+    robot.use(sides.back)
+    robot.up()
+    for i = 1, 15 do
+        robot.use(sides.right)
     end
     robot.down()
 end
 
 init()
 while true do
-    fd = tnk.getTankCapacity(sides.back)
+    fd = tnk.getTankCapacity(sides.right)
     if fd.capacity - fd.amount > 15000 then
         copy()
     end
