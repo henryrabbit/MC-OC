@@ -5,11 +5,11 @@ local sides = require("sides")
 local inv = component.inventory_controller
 local tk = component.tank_controller
 
-local function init()
-    local bucket_slot = 1
-    local tank_slot = 2
-    local full_tank_slot = 3
-end
+
+local bucket_slot = 1
+local tank_slot = 2
+local full_tank_slot = 3
+
 
 local function copy()
     robot.select(bucket_slot)
@@ -30,7 +30,7 @@ local function copy()
         flag = true
         while flag do
             fd = tk.getFluidInTank(sides.down)
-            if fd[1].capacity - fd[1]+.amount > 10000 then
+            if fd[1].capacity - fd[1].amount > 10000 then
                 flag = false
             else
                 os.sleep(1)
@@ -43,7 +43,7 @@ local function copy()
     robot.transferTo(tank_slot)
 end
 
-init()
+
 while true do
     copy()
 end
