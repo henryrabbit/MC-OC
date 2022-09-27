@@ -3,37 +3,47 @@ local robot = require("robot")
 local computer = require("computer")
 local sides = require("sides")
 local inv = component.inventory_controller
-local tnk = component.tank_controller
+local tk = component.tank_controller
 
 local function init()
     local bucket_slot = 1
     local tank_slot = 2
+    local full_tank_slot = 3
 end
 
 local function copy()
     robot.select(bucket_slot)
     inv.equip()
     for i = 1, 10 do
-        robot.use(sides.bottom)
+        tk.fill(1000)
+        inv.equip()
         robot.use(sides.front)
+        inv.equip()
     end
-    inv.equip()
     robot.select(tank_slot)
     robot.drop()
-    robot.suck()
-    inv.equip()
-    robot.use(sides.back)
-    robot.up()
-    for i = 1, 15 do
-        robot.use(sides.right)
-    end
-    robot.down()
+    robot.select(full_tank_slot)
+    for i = 1, 9 do
+        robot.suck(1)
+        tk.drain(10000)
+        robot.transferTo(tank_slot)
+        flag = true
+        while flag do
+            fd = tk.getFluidInTank(sides.down)
+            if fd[1].capacity - fd[1]+.amount > 10000 then
+                flag = false
+            else
+                os.sleep(1)
+            end
+        end
+        robot.fillDown(10000)
+    end    
+    robot.suck(1)
+    tk.drain(10000)
+    robot.transferTo(tank_slot)
 end
 
 init()
 while true do
-    fd = tnk.getTankCapacity(sides.right)
-    if fd.capacity - fd.amount > 15000 then
-        copy()
-    end
+    copy()
 end
